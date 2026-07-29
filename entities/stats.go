@@ -1,6 +1,8 @@
 package entities
 
-import "time"
+import (
+	"time"
+)
 
 type LevelStats struct {
 	ID        int       `json:"id"`

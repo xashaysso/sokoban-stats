@@ -11,6 +11,9 @@ import (
 	"time"
 
 	"stats/db"
+	"stats/db/repositories/pg"
+	"stats/handlers"
+	"stats/services"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -47,9 +50,25 @@ func main() {
 	globalPool := db.Serve()
 	defer globalPool.Close()
 
+	// repositories
+	statsRepo := pg.NewStatsRepo(globalPool)
+
+	// services
+	statsService := services.NewStatsService(statsRepo)
+
+	// handlers
+	statsH := handlers.NewStatsHandler(statsService)
+
+	// endpoints
+	levels := router.Group("/levels")
+	{
+		levels.GET("/:level_id", statsH.GetLevelStats)
+		levels.POST("/:level_id", statsH.CreateLevelStatsEntry)
+	}
+
 	// server start
 	srv := &http.Server{
-		Addr:    PORT,
+		Addr:    ":" + PORT,
 		Handler: router,
 	}
 

@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"log/slog"
 	"os"
+	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	_ "github.com/jackc/pgx/v5/stdlib"
@@ -37,20 +38,36 @@ func Serve() *pgxpool.Pool {
 
 	DB_URL := os.Getenv("DB_URL")
 
+	var pool *pgxpool.Pool
+	var err error
+
+	const max_attempts = 5
+	const delay = 4 * time.Second
+
+	for attempt := 1; attempt <= max_attempts; attempt++ {
+		pool, err = pgxpool.New(ctx, DB_URL)
+		if err == nil {
+			err = pool.Ping(ctx)
+		}
+		if err == nil {
+			slog.Info("connected to db successfully")
+			break
+		}
+
+		slog.Warn("database is not ready, retrying...", slog.Any("err", err), slog.Duration("wait_time", delay))
+		if pool != nil {
+			pool.Close()
+		}
+
+		if attempt == max_attempts {
+			slog.Error("couldn't connect to db after max attempts. Exiting...")
+			os.Exit(1)
+		}
+
+		time.Sleep(delay)
+	}
+
 	RunMigrations(DB_URL)
-
-	pool, err := pgxpool.New(ctx, DB_URL)
-	if err != nil {
-		slog.Error("unable to create database pool", slog.Any("err", err))
-		os.Exit(1)
-	}
-
-	if err := pool.Ping(ctx); err != nil {
-		slog.Error("database ping failed", slog.Any("err", err))
-		os.Exit(1)
-	}
-
-	slog.Info("connected to db successfully")
 
 	return pool
 }
