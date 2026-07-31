@@ -66,3 +66,17 @@ func (h *StatsHandler) CreateLevelStatsEntry(c *gin.Context) {
 	}
 	c.JSON(http.StatusCreated, statsEntry)
 }
+
+func (h *StatsHandler) GetPlayerRecords(c *gin.Context) {
+	ctx := c.Request.Context()
+
+	username := c.Param("username")
+
+	playerRecords, err := h.StatsService.GetPlayerRecords(ctx, username)
+	if err != nil {
+		HandleError(c, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, playerRecords)
+}

@@ -65,6 +65,10 @@ func main() {
 		levels.GET("/:level_id", statsH.GetLevelStats)
 		levels.POST("/:level_id", statsH.CreateLevelStatsEntry)
 	}
+	players := router.Group("/players")
+	{
+		players.GET("/:username/records", statsH.GetPlayerRecords)
+	}
 
 	// server start
 	srv := &http.Server{

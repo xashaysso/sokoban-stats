@@ -31,7 +31,7 @@ func (s *StatsService) CreateLevelStatsEntry(ctx context.Context, params *entiti
 	if params.LevelID < 0 {
 		return entities.LevelStats{}, ErrInvalidLevelID
 	}
-	if len(params.Username) < 3 {
+	if len(params.Username) < 3 || len(params.Username) > 50 {
 		return entities.LevelStats{}, ErrInvalidUsername
 	}
 	if params.Steps <= 0 {
@@ -45,4 +45,16 @@ func (s *StatsService) CreateLevelStatsEntry(ctx context.Context, params *entiti
 		return entities.LevelStats{}, err
 	}
 	return levelStats, nil
+}
+
+func (s *StatsService) GetPlayerRecords(ctx context.Context, username string) ([]entities.PlayerRecord, error) {
+	if len(username) < 3 || len(username) > 50 {
+		return nil, ErrInvalidUsername
+	}
+
+	playerRecords, err := s.StatsRepo.GetPlayerRecords(ctx, username)
+	if err != nil {
+		return nil, err
+	}
+	return playerRecords, nil
 }

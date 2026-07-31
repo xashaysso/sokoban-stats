@@ -47,3 +47,24 @@ func (r *PgStatsRepo) CreateLevelStatsEntry(ctx context.Context, params *entitie
 
 	return StatsEntry, nil
 }
+
+func (r *PgStatsRepo) GetPlayerRecords(ctx context.Context, username string) ([]entities.PlayerRecord, error) {
+	var PlayerRecordsList []entities.PlayerRecord
+	rows, err := r.Pool.Query(ctx, `SELECT DISTINCT ON (level_id) level_id, steps, time FROM level_stats WHERE username = $1 ORDER BY level_id, steps ASC, time ASC`, username)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var playerRecord entities.PlayerRecord
+		err := rows.Scan(&playerRecord.LevelID, &playerRecord.Steps, &playerRecord.Time)
+		if err != nil {
+			return nil, err
+		}
+
+		PlayerRecordsList = append(PlayerRecordsList, playerRecord)
+	}
+
+	return PlayerRecordsList, nil
+}

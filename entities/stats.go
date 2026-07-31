@@ -19,3 +19,9 @@ type CreateLevelStatsParams struct {
 	Steps    int    `json:"steps"`
 	Time     int    `json:"time"` // <seconds>
 }
+
+type PlayerRecord struct {
+	LevelID int `json:"level_id"`
+	Steps   int `json:"steps"`
+	Time    int `json:"time"`
+}
