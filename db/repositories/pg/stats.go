@@ -19,7 +19,7 @@ func NewStatsRepo(p *pgxpool.Pool) *PgStatsRepo {
 
 func (r *PgStatsRepo) GetLevelStats(ctx context.Context, levelID int) ([]entities.LevelStats, error) {
 	var levelStatsList []entities.LevelStats
-	rows, err := r.Pool.Query(ctx, `SELECT id, username, level_id, steps, time, created_at FROM level_stats WHERE level_id = $1`, levelID)
+	rows, err := r.Pool.Query(ctx, `SELECT id, username, level_id, steps, time, created_at FROM level_stats WHERE level_id = $1 ORDER BY steps, time ASC LIMIT 10`, levelID)
 	if err != nil {
 		return nil, err
 	}

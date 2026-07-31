@@ -37,6 +37,9 @@ func (s *StatsService) CreateLevelStatsEntry(ctx context.Context, params *entiti
 	if params.Steps <= 0 {
 		return entities.LevelStats{}, ErrInvalidSteps
 	}
+	if params.Time <= 0 {
+		return entities.LevelStats{}, ErrInvalidTime
+	}
 	levelStats, err := s.StatsRepo.CreateLevelStatsEntry(ctx, params)
 	if err != nil {
 		return entities.LevelStats{}, err

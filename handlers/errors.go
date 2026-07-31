@@ -20,6 +20,7 @@ func HandleError(c *gin.Context, err error) {
 	// 400 Bad Request
 	case errors.Is(err, services.ErrInvalidLevelID),
 		errors.Is(err, services.ErrInvalidSteps),
+		errors.Is(err, services.ErrInvalidTime),
 		errors.Is(err, services.ErrInvalidUsername):
 		slog.Warn("client bad request", logAttrs...)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
