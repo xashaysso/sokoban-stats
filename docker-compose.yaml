@@ -12,6 +12,23 @@ services:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - stats_network
+
+  stats_app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: stats_app
+    ports:
+      - "8080:8080"
+    environment:
+      - APP_ENV=dev
+      - DB_URL=postgres://user:password@db:5432/stats_db?sslmode=disable
+      - PORT=8080
+    depends_on:
+      - db
+    networks:
+      - stats_network
+
 volumes:
   postgres_data:
 
