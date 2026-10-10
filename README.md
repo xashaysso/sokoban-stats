@@ -6,7 +6,7 @@ A lightweight Go REST API service for receiving gameplay statistics and managing
 
 ## Tech Stack
 * **Language:** Go
-* **Database:** PostgreSQL (`pgxpool`, `goose` migrations)
+* **Database:** PostgreSQL (`pgxpool`, `goose`)
 * **Deployment:** Docker / Docker Compose
 
 ## API Endpoints
@@ -20,4 +20,6 @@ A lightweight Go REST API service for receiving gameplay statistics and managing
 ## Quick Start
 
 ```bash
+git clone https://github.com/xashaysso/sokoban-stats
+cd sokoban-stats
 docker-compose up -d --build
